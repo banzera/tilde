@@ -1,0 +1,44 @@
+! -----------------------------------
+! ~/.Xdefaults
+! By Max Mackie (max@f33r.com)
+! -----------------------------------
+
+UXTerm*Background: grey6
+UXTerm*Foreground: white
+UXTerm*saveLines: 2000
+
+! [0] black
+UXTerm*color0: #242424
+UXTerm*color8: #242424
+
+XTerm*Background: grey6
+XTerm*Foreground: white
+XTerm*saveLines: 2000
+!
+! [1] red
+UXTerm*color1: firebrick1
+UXTerm*color9: firebrick1
+
+! [2] green
+UXTerm*color2: palegreen
+UXTerm*color10: palegreen
+
+! [3] yellow
+UXTerm*color3: LightGoldenrod1
+UXTerm*color11: LightGoldenrod1
+
+! [4] blue
+UXTerm*color4: SteelBlue1
+UXTerm*color12: SteelBlue1
+
+! [5] magenta
+UXTerm*color5: violet
+UXTerm*color13: violet
+
+! [6] cyan
+UXTerm*color6: CadetBlue2
+UXTerm*color14: CadetBlue2
+
+! [7] white
+UXTerm*color7: white
+UXTerm*color15: white

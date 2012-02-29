@@ -11,7 +11,7 @@ function title () {
 # Display the process tree inside the prompt for shells that are not at the top
 # level (as determined by $SHLVL).
 function __prompt_display_process_tree () {
-	[ ${SHLVL:-0} -gt 1 ] && echo " (${FONT_REVERSE}level ${SHLVL}${FONT_NOT_REVERSE}: $(process-tree))";
+	[ ${SHLVL:-0} -gt 11 ] && echo " (${FONT_REVERSE}level ${SHLVL}${FONT_NOT_REVERSE}: $(process-tree))";
 }
 
 # Display an error message inside the prompt when the previous command has
