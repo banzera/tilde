@@ -25,9 +25,11 @@ fi
 #xrdb -merge $HOME/.Xresources
 xrdb -merge $HOME/.Xdefaults
 #xmodmap ~/.Xmodmap
-#setxkbmap -layout gb -option ctrl:nocaps
+#setxkbmap -layout en -option ctrl:nocaps
 
 #hash chromium && chromium &
+
+display -window root ~/.wallpaper.jpg
 
 while true
 do
