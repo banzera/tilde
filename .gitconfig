@@ -73,3 +73,6 @@
 	br = branch
 	ci = commit
 	st = status
+	
+	lsd = log --graph --decorate --pretty=oneline --abbrev-commit --all
+

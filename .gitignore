@@ -9,3 +9,5 @@ tags
 
 # OS X Finder turdlets
 *.DS_Store
+
+.bash/extra
