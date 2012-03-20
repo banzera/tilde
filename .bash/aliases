@@ -23,3 +23,5 @@ alias hgrep='history|grep'
 #alias cp='cp -i'
 #alias rm='rm -i'
 #alias mv='mv -i'
+#
+alias chrome="google-chrome --no-sandbox"
