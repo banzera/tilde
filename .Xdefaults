@@ -3,6 +3,9 @@
 ! By Max Mackie (max@f33r.com)
 ! -----------------------------------
 
+UXTerm*faceName: bitstream
+UXTerm*faceSize: 11
+
 UXTerm*Background: grey6
 UXTerm*Foreground: white
 UXTerm*saveLines: 2000
