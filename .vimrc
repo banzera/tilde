@@ -1,3 +1,4 @@
+call pathogen#infect()
 set shiftwidth=4
 set softtabstop=4
 set tabstop=4
@@ -12,3 +13,4 @@ set number
 set nowrap
 set textwidth=80
 syntax enable
+filetype plugin indent on
