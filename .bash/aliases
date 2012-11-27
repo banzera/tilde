@@ -24,4 +24,7 @@ alias hgrep='history|grep'
 #alias rm='rm -i'
 #alias mv='mv -i'
 #
-alias chrome="google-chrome --no-sandbox"
+alias chrome="google-chrome"
+
+
+alias nn='nautilus --no-desktop'
