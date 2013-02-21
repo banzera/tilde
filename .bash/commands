@@ -3,16 +3,25 @@
 # Settings, functions and aliases for commands
 # =============================================================================
 
+# Enable simple aliases to be sudo'ed. ("sudone"?)
+# http://www.gnu.org/software/bash/manual/bashref.html#Aliases says: "If the
+# last character of the alias value is a space or tab character, then the next
+# command word following the alias is also checked for alias expansion."
+alias sudo='sudo ';
+
 # Paths and binaries
 # -----------------------------------------------------------------------------
 # List the directories we want to add to the PATH variable, if they exist.
 paths_to_add=(
 	# Private "bin"
 	"$HOME/bin"
+	# Homebrew, Rudix (and various other distributions and local installations)
+	/usr/local/{,s}bin
+	# MacPorts
+	/opt/local/{,s}bin
 	# System
 	/{,s}bin
 	/usr/{,s}bin
-	/usr/local/{,s}bin
 	# X binaries
 	/usr/X11/bin
 	# Java runtimes
@@ -52,6 +61,9 @@ for binary in /usr/bin/ssh*; do
 done;
 unset binary;
 
+# Prefer Homebrew's netcat
+[ -x /usr/local/bin/netcat ] && hash -p /usr/local/bin/netcat nc;
+
 # OS X's file system is case-insensitive by default, so use aliases to get
 # "GET"/"HEAD"/… working. (Otherwise "HEAD" would execute "/usr/bin/head".)
 [[ "$OSTYPE" =~ ^darwin ]] && for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
@@ -63,8 +75,9 @@ unset method;
 # -----------------------------------------------------------------------------
 # I know it is bad practice to override the default commands, but this is for
 # my own safety. If you really want the original "instakill" versions, you can
-# still use "command rm" or "/bin/rm" inside your commands, aliases, functions
-# or scripts.
+# use "command rm", "\rm", or "/bin/rm" inside your own commands, aliases, or
+# shell functions. Note that separate scripts are not affected by the aliases
+# defined here.
 alias cp='cp -i';
 alias mv='mv -i';
 alias rm='rm -i';
@@ -87,11 +100,38 @@ function view {
 	command view "${args[@]}";
 }
 
-export PAGER='less --quit-if-one-screen --no-init --ignore-case --RAW-CONTROL-CHARS --quiet --dumb';
+# Make less the default pager, and specify some useful defaults.
+less_options=(
+	# If the entire text fits on one screen, just show it and quit. (Be more
+	# like "cat" and less like "more".)
+	--quit-if-one-screen
+
+	# Do not clear the screen first.
+	--no-init
+
+	# Like "smartcase" in Vim: ignore case unless the search pattern is mixed.
+	--ignore-case
+
+	# Do not automatically wrap long lines.
+	--chop-long-lines
+
+	# Allow ANSI colour escapes, but no other escapes.
+	--RAW-CONTROL-CHARS
+
+	# Do not ring the bell when trying to scroll past the end of the buffer.
+	--quiet
+
+	# Do not complain when we are on a dumb terminal.
+	--dumb
+);
+export LESS="${less_options[*]}";
+unset less_options;
+export PAGER='less';
+
 # Make "less" transparently unpack archives etc.
 if [ -x /usr/bin/lesspipe ]; then
 	eval $(/usr/bin/lesspipe);
-elif type -t lesspipe.sh > /dev/null; then
+elif command -v lesspipe.sh > /dev/null; then
 	# MacPorts recommended "/opt/local/bin/lesspipe.sh", but this is more
 	# portable for people that have it in another directory in their $PATH.
 	eval $(lesspipe.sh);
@@ -109,7 +149,7 @@ function pro {
 if [[ "$OSTYPE" =~ ^darwin ]]; then
 	alias ls='command ls -G';
 else
-	alias ls='command ls --color';
+	alias ls='command ls --color=auto';
 	export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:';
 fi;
 
@@ -118,6 +158,7 @@ fi;
 complete -d cd pushd rmdir;
 complete -u finger mail;
 complete -v set unset;
+complete -A command wtfis;
 [ -d ~/.bash/completion ] && for file in ~/.bash/completion/*; do
 	[ -f "$file" ] && source "$file";
 done;
@@ -137,19 +178,21 @@ function lman {
 
 # Clipboard access. I created these aliases to have the same command on
 # Cygwin, Linux and OS X.
-if type -t pbpaste >/dev/null; then
+if command -v pbpaste >/dev/null; then
 	alias getclip='pbpaste';
 	alias putclip='pbcopy';
-elif type -t xclip >/dev/null; then
+elif command -v xclip >/dev/null; then
 	alias getclip='xclip --out';
 	alias putclip='xclip --in';
 fi;
 
 # Make "ctags" recurse by default.
-alias ctags='ctags --exclude={docs,cache,tiny_mce,layout} --recurse';
+if command -v ctags > /dev/null; then
+	alias ctags='ctags --exclude={docs,cache,tiny_mce,layout} --recurse';
+fi;
 
 # OS X has no "md5sum", so use "md5" as a fall-back.
-type -t md5sum > /dev/null || alias md5sum='md5';
+command -v md5sum > /dev/null || alias md5sum='md5';
 
 # Make the "sudo" prompt more useful, without requiring access to "visudo".
 export SUDO_PROMPT='[sudo] password for %u on %h: ';
@@ -157,9 +200,9 @@ export SUDO_PROMPT='[sudo] password for %u on %h: ';
 # Version control
 # -----------------------------------------------------------------------------
 # Use "colordiff" or "highlight" to colour diffs.
-if type -t colordiff > /dev/null; then
+if command -v colordiff > /dev/null; then
 	alias difflight='colordiff | less -XFIRd';
-elif type -t highlight > /dev/null; then
+elif command -v highlight > /dev/null; then
 	alias difflight='highlight --dark-red ^-.* | highlight --dark-green ^+.* | highlight --yellow ^Only.* | highlight --yellow ^Files.*differ$ | less -XFIRd';
 else
 	alias difflight='less -XFIRd';
@@ -193,10 +236,15 @@ function git-show-branch {
 # -----------------------------------------------------------------------------
 # Show a unified diff, colourised if possible and paged if necessary.
 function udiff {
-	type -t colordiff > /dev/null \
-		&& local command=colordiff \
-		|| local command=diff;
-	"$command" -wU4 -x .svn "$@" | less -XFIRd;
+	if command -v colordiff > /dev/null; then
+		colordiff -wU4 "$@" | $PAGER;
+		return ${PIPESTATUS[0]};
+	elif command -v git > /dev/null && ! [[ " $* " =~ \ /dev/fd ]]; then
+		git diff --no-index "$@";
+		return $?;
+	fi;
+
+	diff -wU4 -x .svn "$@" | $PAGER;
 	return ${PIPESTATUS[0]};
 }
 
@@ -259,7 +307,7 @@ function show {
 }
 
 # Use "hd" for the canonical hex dump. (Some systems have this symlinked.)
-type -t hd > /dev/null || alias hd='hexdump -C';
+command -v hd > /dev/null || alias hd='hexdump -C';
 
 # Backups
 # -----------------------------------------------------------------------------
@@ -267,7 +315,7 @@ type -t hd > /dev/null || alias hd='hexdump -C';
 # that looks like a full backup, like Time Machine does.
 function backup () {(
 	# Backup format.
-	local backup_dir="$HOME/backups";
+	local backup_dir="${TILDE_BACKUP_DIR:-$HOME/backups}";
 	local date_format='%Y-%m-%d-%H-%M-%S';
 
 	# Usage.
@@ -275,6 +323,7 @@ function backup () {(
 		echo 'Usage: backup [[USER@]HOST:]FILE...';
 		echo;
 		echo "Back up the given files and directories to $backup_dir/$(date +"$date_format")";
+		echo 'The backup directory is read from $TILDE_BACKUP_DIR, defaulting to $HOME/backups'.
 		[ "$1" = '--' ] && shift;
 		[ $# -gt 0 ];
 		exit $?;
@@ -296,24 +345,29 @@ function backup () {(
 		# Determine the full source path, source location and target path.
 		# For local files, the source path and location are the same. For
 		# remote files, the location is [user@]host:path.
+		local is_dir source_location source_path;
 		if [ $is_remote -eq 1 ]; then
 			# For SSH sources, use SSH to find the full path.
 			host="${BASH_REMATCH[1]}";
-			local source_path="$(ssh "$host" "$(printf "$(cat <<-'EOD'
+			{ read is_dir; read -r source_path; } < <(ssh "$host" "$(printf "$(cat <<-'EOD'
 				host=%q;
 				path=%q;
 				if ! [ -z "$path" -o -e "$path" ]; then
 					echo "$host:$path does not exist." 1>&2;
 					exit 1;
 				fi;
+				[ -d "$path" ] && echo 1 || echo 0;
 				{ [ -d "$path" ] && cd -- "$path" && pwd; } || { cd -- "$(dirname -- "$path")" && echo "$PWD/$(basename -- "$path")"; }
-			EOD)" "$host" "${BASH_REMATCH[2]}")")" || exit 1;
-			local source_location="$host:$source_path";
-			local source_path="/ssh=$host$source_path";
+			EOD)" "$host" "${BASH_REMATCH[2]}")") || exit 1;
+			source_location="$host:$source_path";
+			source_path="/ssh=$host$source_path";
 		elif [ -z "$path" -o -e "$path" ]; then
 			# For local sources, go to the directory or the file's parent directory and use the working directory.
-			local source_path="$({ [ -d "$path" ] && cd -- "$path" && pwd; } || { cd -- "$(dirname -- "$path")" && echo "$PWD/$(basename -- "$path")"; })";
-			local source_location="$source_path";
+			source_path="$({ [ -d "$path" ] && cd -- "$path" && pwd; } || { cd -- "$(dirname -- "$path")" && echo "$PWD/$(basename -- "$path")"; })";
+			source_location="$source_path";
+			[ -d "$source_path" ] \
+				&& is_dir=1 \
+				|| is_dir=0;
 		else
 			echo "$path does not exist." 1>&2;
 			exit 1;
@@ -321,9 +375,12 @@ function backup () {(
 
 		# Determine the target directory for the current backup.
 		local curr_backup="$backup_dir/$curr_date$source_path";
-		# if [ $is_remote -eq 1 ]; then
 		local curr_backup_dir="$(dirname "$curr_backup")";
-		local curr_backup_dir="$curr_backup";
+		if [ $is_dir -eq 1 ]; then
+			local curr_backup_dir="${curr_backup%/}/";
+		else
+			local curr_backup_dir="$(dirname "$curr_backup")/";
+		fi;
 
 		# Check for previous backups.
 		local prev_backup='';
@@ -332,8 +389,6 @@ function backup () {(
 			:
 		done;
 
-# XXX debug delme
-for x in path is_remote source_path source_location curr_backup curr_backup_dir prev_backup; do printf $'%12s: "%s"\n' "$x" "${!x}"; done
 		# Back up using rsync, hard-linking unchanged files to the previous backup, if any.
 		mkdir -p "$curr_backup_dir";
 		if [ "$(basename "$source_path")" = "$path" ]; then
@@ -342,14 +397,26 @@ for x in path is_remote source_path source_location curr_backup curr_backup_dir 
 			echo "Now backing up:  \"$path\" (\"$source_path\")";
 		fi;
 		echo "Backing up to:   \"$curr_backup\"";
+
+		if [ $is_dir -eq 1 ]; then
+			source_location="$source_location/";
+		fi;
+
 		if [ -z "$prev_backup" ]; then
 			echo 'Previous backup: (none)';
 			echo;
-			echo rsync --itemize-changes --archive -- "$source_location" "$curr_backup_dir";
+			local command=(rsync --itemize-changes --archive -- "$source_location" "$curr_backup_dir");
+			echo "${command[@]}";
+			"${command[@]}";
 		else
 			echo "Previous backup: \"$prev_backup\"";
 			echo;
-			echo rsync --itemize-changes --archive --link-dest="$(dirname "$prev_backup")" -- "$source_location" "$curr_backup_dir"; # | sed '/\/\.svn\//d; /^cd+++++++ .*\/$/d';
+			if [ $is_dir -eq 0 ]; then
+				prev_backup="$(dirname "$prev_backup/")";
+			fi;
+			command=(rsync --itemize-changes --archive --link-dest="$prev_backup" -- "$source_location" "$curr_backup_dir");
+			echo "${command[@]}";
+			"${command[@]}";
 		fi;
 
 		# Print a blank line between two backups.
@@ -573,7 +640,7 @@ function vack {
 		echo "$file";
 		files+=("$file");
 	done < <(bash -c "${cmd/ack/ack -l}");
-	"${EDITOR:-vim}" "${files[@]}";
+	vim -p "${files[@]}";
 }
 
 # Convert the parameters or STDIN to lowercase.
@@ -691,7 +758,7 @@ function wtfis {
 				# Show the output from "type" without ANSI escapes.
 				echo "${type//$'\e'/\\033}";
 
-				case "$(type -t "$cmd")" in
+				case "$(command -v "$cmd")" in
 					'alias')
 						local alias_="$(alias "$cmd")";
 						# The output looks like "alias foo='bar'"; so
@@ -703,6 +770,7 @@ function wtfis {
 						# spaces inside command names.
 						read -d ' ' alias_ <<< "$alias_";
 						# Recurse and indent the output.
+						# TODO: prevent infinite recursion
 						wtfis "$alias_" 2>&2 | sed 's/^/  /';
 						;;
 					'keyword' | 'builtin')
@@ -728,7 +796,7 @@ function wtfis {
 				# First, get the one-line description from the man page.
 				# ("col -b" gets rid of the backspaces used by OS X's man
 				# to get a "bold" font.)
-				man "$(basename "$path")" 2>/dev/null | col -b | \
+				(COLUMNS=10000 man "$(basename "$path")" 2>/dev/null) | col -b | \
 				awk '/^NAME$/,/^$/' | {
 					local buf line;
 					read -r line;
@@ -743,9 +811,16 @@ function wtfis {
 					[ -n "$buf" ] && echo "$buf";
 				}
 
-				# Then, combine the output "type" and "file".
-				local fileinfo="$(file "$path")";
-				echo "${type}${fileinfo/$path}";
+				# Get the absolute path for the binary.
+				local full_path="$(
+					cd "$(dirname "$path")" \
+						&& echo "$PWD/$(basename "$path")" \
+						|| echo "$path"
+				)";
+
+				# Then, combine the output of "type" and "file".
+				local fileinfo="$(file "$full_path")";
+				echo "${type%$path}${fileinfo}";
 
 				# Finally, show it using "ls" and highlight the path.
 				# If the path is a symlink, keep going until we find the
@@ -754,7 +829,13 @@ function wtfis {
 				local paths=("$path") target_path="$path";
 				while [ -L "$target_path" ]; do
 					target_path="$(readlink "$target_path")";
-					paths+=("$target_path");
+					paths+=("$(
+						# Do some relative path resolving for systems
+						# without readlink --canonicalize.
+						cd "$(dirname "$path")";
+						cd "$(dirname "$target_path")";
+						echo "$PWD/$(basename "$target_path")"
+					)");
 				done;
 				local ls="$(command ls -fdalF "${paths[@]}")";
 				echo "${ls/$path/$'\e[7m'${path}$'\e[27m'}";
@@ -767,7 +848,6 @@ function wtfis {
 	done;
 	return $ret;
 }
-complete -A command wtfis;
 
 # Try to make sense of the date. It supports everything GNU date knows how to
 # parse, as well as UNIX timestamps. It formats the given date using the
@@ -898,7 +978,11 @@ function binary-backoff {
 	local num_tries=0;
 	while [ -z "$MAX_BB_TRIES" ] || [ $num_tries -lt $MAX_BB_TRIES ]; do
 		# If successful, stop immediately.
-		"$@" && return $?;
+		"$@" && return;
+
+		# Remember the non-zero exit status.
+		exit_status=$?;
+		exit_msg="Exit status: $exit_status.";
 
 		# Check if have reached the maximum number of tries.
 		let num_tries++;
@@ -909,8 +993,21 @@ function binary-backoff {
 		fi;
 
 		# Sleep for a while.
-		echo "Sleeping for $delay seconds after $num_tries tries…" 1>&2;
-		sleep $delay;
+		echo;
+		local move_up="$(tput cuu1)" clear_line="$(tput el)";
+		num_seconds_left=$delay;
+		while [ $num_seconds_left -gt 0 ]; do
+			[ $num_seconds_left -eq 1 ] \
+				&& local time_unit=second \
+				|| local time_unit=seconds;
+			echo "${move_up}${clear_line}${exit_msg} Waiting for $num_seconds_left $time_unit after $num_tries tries…" 1>&2;
+			sleep 1;
+			let num_seconds_left--;
+		done;
+		[ $delay -eq 1 ] \
+			&& local time_unit=second \
+			|| local time_unit=seconds;
+		echo "${move_up}${clear_line}${exit_msg} Waited for $delay $time_unit. Retrying…" 1>&2;
 
 		# Double the delay, but cap it at MAX_BB_DELAY.
 		let delay*=2;

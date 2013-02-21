@@ -1,6 +1,6 @@
 Tilde: ~ is where the ♥ is
 
-Various configuration files ("dot files") and scripts from my home directory. I
+Various configuration files ("dotfiles") and scripts from my home directory. I
 use this on new computers so I feel more at home.
 
 To install, execute:
@@ -9,6 +9,6 @@ To install, execute:
 To update an existing install, go to Tilde's directory and execute:
     `git pull && ./install.sh`
 
-Jan Moesen, 2011
+Jan Moesen
 
 See COPYING for licence details.

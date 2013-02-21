@@ -5,9 +5,7 @@
 "\e[B": history-search-forward
 "\e[A": history-search-backward
 
-# Remember the cursor position for each history line. Note that this only works
-# for previous-history and next-history, and apparently not (or not so well)
-# with my Up/Down key bindings history-search-{back,for}ward.
+# Try to stay at the same the cursor position when moving through the history.
 set history-preserve-point on
 
 # Autocompletion
@@ -17,6 +15,11 @@ set completion-ignore-case On
 
 # When autocompleting symlinks to directories, immediately add a trailing "/".
 set mark-symlinked-directories on
+
+# Do not expand "~" to the home directory when completing. (The actual value
+# passed on to the command still is expanded, though. Which is good.) "Off" is
+# the default value, but some servers override this, so I override the override.
+set expand-tilde off
 
 # Flip through autocompletion matches with Shift-Tab.
 "\e[Z": menu-complete
