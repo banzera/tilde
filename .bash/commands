@@ -26,6 +26,8 @@ paths_to_add=(
 	/usr/X11/bin
 	# Java runtimes
 	~/runtimes/{gosu,fantom,groovy}/bin
+	### Added by the Heroku Toolbelt
+	/usr/local/heroku/bin
 );
 
 # Create an array of directories currently in the PATH variable.
