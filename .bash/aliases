@@ -25,9 +25,9 @@ alias hgrep='history|grep'
 #alias mv='mv -i'
 #
 alias chrome="google-chrome"
-
-
 alias nn='nautilus --no-desktop'
 
 alias sp='nautilus --no-desktop ~/.config/sublime-text-2/Packages'
 alias gosp='cd ~/.config/sublime-text-2/Packages'
+
+alias obliterate='rm -Rf'
