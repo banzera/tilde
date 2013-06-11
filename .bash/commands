@@ -57,12 +57,6 @@ printf -v PATH "%s:" "${new_paths[@]}";
 export PATH="${PATH%:}";
 unset {old,new}_path{,s} path{s,}_to_add;
 
-# Override MacPorts' SSH binaries.
-for binary in /usr/bin/ssh*; do
-	[ -x "$binary" ] && hash -p "$binary" "$(basename "$binary")";
-done;
-unset binary;
-
 # Prefer Homebrew's netcat
 [ -x /usr/local/bin/netcat ] && hash -p /usr/local/bin/netcat nc;
 
@@ -869,12 +863,8 @@ function wtfis {
 #   $ whenis 1979-10-14T12:00:00.001-04:00 # HTML5 global date and time
 #   Sun Oct 14 17:00:00 CET 1979
 #
-#   $ (TZ=America/Vancouver whenis) # Current time in Vancouver
+#   $ TZ=America/Vancouver whenis # Current time in Vancouver
 #   Thu Oct 20 13:04:20 PDT 2011
-#
-# When requesting a different timezone like in the last example, make sure to
-# execute the command in a subshell to avoid changing your timezone for the
-# rest of the session.
 #
 # For more info, check out http://kak.be/gnudateformats.
 function whenis {
