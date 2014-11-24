@@ -1,13 +1,33 @@
 [core]
-	repositoryformatversion = 0
-	filemode = true
-	bare = false
-	logallrefupdates = true
-	ignorecase = true
+	# Use a global .gitignore file.
 	excludesfile = ~/.gitignore
 
+	# Enable parallel I/O for operations like "git diff".
+	# See http://stackoverflow.com/q/18257622/276478
+	preloadindex = true
+
+	# Use 12 characters for the abbreviated commit hash. I can currently make
+	# do with 10, but this should provide a certain level of safety for the
+	# near-ish future. See the interesting and well-researched article at
+	# http://blog.cuviper.com/2013/11/10/how-short-can-git-abbreviate/
+	abbrev = 12
+
 [color]
+	# Use colors by default when the output is a terminal that supports them.
 	ui = auto
+
+[color.grep]
+	filename = bold green
+	match = black yellow
+
+[diff]
+	# Use more time to create better diffs. E.g. matching opening/closing braces
+	# from neighbour functions.
+	algorithm = patience
+
+	# Tells Git to detect renames. If set to "true", it will enable basic
+	# rename detection. If set to "copies", it will detect copies, as well.
+	renames = copies
 
 [merge]
 	tool = vimdiff
@@ -36,18 +56,12 @@
 	# Like "git l", but show all and draw the history graph, too.
 	ll = tilde-log --graph
 
+	# Like "git l", but for the reflog.
+	rl = tilde-reflog
+
 	# Show a concise status of the working directory, along with the branch
 	# and the number of commits behind and/or ahead.
 	s = status --short --branch
-
-	# Quickly push to the most common destination.
-	pom = push origin master
-
-	# I know "pum" could just as well stand for "PUsh" instead of "PUll", but
-	# I am so used to "git pom" that "git pum" feels like a natural
-	# counterpart. I always try to rebase to prevent unnecessary merge
-	# commits.
-	pum = pull --rebase origin master
 
 	# Show the staged changes.
 	dc = diff --cached
@@ -77,3 +91,7 @@
 	
 	lsd = log --graph --decorate --pretty=oneline --abbrev-commit --all
 
+	# Make "git grep" look a bit like "ack"/"ag". Note that you need to
+	# specify --no-index to search all files, and that submodules are not
+	# searched.
+	ack = grep --extended-regexp --break --heading --line-number
