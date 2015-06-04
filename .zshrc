@@ -1,17 +1,23 @@
-# Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+source ~/.tilde/.antigen.zsh
 
-ZSH_THEME="jnrowe"
+ANTIGEN_DEFAULT_REPO_URL=https://github.com/banzera/oh-my-zsh.git
+
+HIST_STAMPS="mm/dd/yyyy"
 
 DISABLE_CORRECTION="true"
 DISABLE_AUTO_UPDATE="true"
 
-# Uncomment following line if you want to  shown in the command execution time stamp
-# in the history command output. The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|
-# yyyy-mm-dd
-HIST_STAMPS="mm/dd/yyyy"
+# Load the oh-my-zsh's library.
+antigen use oh-my-zsh
 
-plugins=(
+# Syntax highlighting bundle.
+# antigen bundle zsh-users/zsh-syntax-highlighting
+
+antigen bundle --loc=custom/plugins/git-delete-history
+antigen bundle --loc=custom/plugins/better-history-search
+# antigen bundle custom/plugins/t
+   
+antigen bundles <<EOBUNDLES
    adb
    battery
    bower
@@ -26,15 +32,12 @@ plugins=(
    extract
    fasd
    git
-   git-delete-history
    git-extras
    github
    gitignore
-   gitlab
    gradle
    grails
    heroku
-   better-history-search
    jsontools
    mvn
    nyan
@@ -51,11 +54,16 @@ plugins=(
    sublime
    svn
    themes
-   t
    vagrant
    virtualenv
    z
-)
+EOBUNDLES
+
+# Load the theme.
+antigen theme jnrowe
+
+# Tell antigen that you're done.
+antigen apply
 
 PROJECT_PATHS=(
     ~/Development/
@@ -66,8 +74,6 @@ PROJECT_PATHS=(
     ~/Development/3rd_party/
     ~/Development/exploratorium/
 )
-
-source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
