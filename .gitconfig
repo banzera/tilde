@@ -95,3 +95,6 @@
 	# specify --no-index to search all files, and that submodules are not
 	# searched.
 	ack = grep --extended-regexp --break --heading --line-number
+
+[include]
+  path = .gitconfig.local
