@@ -71,20 +71,21 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
-
-PATHS=(
-   ~/.pythonbrew/bin
-   ~/bin
-   ~/runtimes/gosu/bin
-   /usr/local/heroku/bin
-   ~/.rvm/bin # Add RVM to PATH for scripting
-   /usr/texbin
-   /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/
-)
-
-for P in $PATHS; do
-   PATH=$PATH:$P
+for P in \
+  /usr/bin \
+  /bin \
+  /usr/sbin \
+  /sbin \
+  /usr/local/bin \
+  ~/.pythonbrew/bin \
+  ~/bin \
+  ~/runtimes/gosu/bin \
+  /usr/local/heroku/bin \
+  ~/.rvm/bin \
+  /usr/texbin \
+  /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/ \
+; do
+  if [[ -d $P ]]; then PATH=$PATH:$P ; fi
 done
 
 export PATH
@@ -92,7 +93,8 @@ export PATH
 export EDITOR="subl --wait"
 export VISUAL=$EDITOR
 
-export JAVA_HOME=$(/usr/libexec/java_home)
+export JAVA_HOME
+JAVA_HOME=$(/usr/libexec/java_home)
 
 # because the npm plugin doesn't work properly...
 eval "$(npm completion 2>/dev/null)"
@@ -103,6 +105,5 @@ eval "$(boot2docker shellinit 2>/dev/null)"
 
 #THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
 [[ -s "/Users/bryanbanz/.gvm/bin/gvm-init.sh" ]] && source "/Users/bryanbanz/.gvm/bin/gvm-init.sh"
-
 
 fortune -s | cowsay | lolcat
