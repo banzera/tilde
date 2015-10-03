@@ -16,9 +16,8 @@ plugins=(
    battery
    bower
    brew
-   # bundler
-   # coffee
-   colored-man
+   brew-cask
+   chucknorris
    cp
    django
    docker
@@ -54,6 +53,7 @@ plugins=(
    t
    vagrant
    virtualenv
+   web-search
    z
 )
 
@@ -64,7 +64,7 @@ PROJECT_PATHS=(
     ~/Development/firemon/proserv/clients/
     ~/Development/firemon/proserv/kit/
     ~/Development/3rd_party/
-    ~/Development/exploratorium/
+    ~/Development/labs/
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -83,7 +83,7 @@ for P in \
   /usr/local/heroku/bin \
   ~/.rvm/bin \
   /usr/texbin \
-  /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/ \
+  ~/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/ \
 ; do
   if [[ -d $P ]]; then PATH=$PATH:$P ; fi
 done
@@ -94,16 +94,16 @@ export EDITOR="subl --wait"
 export VISUAL=$EDITOR
 
 export JAVA_HOME
-JAVA_HOME=$(/usr/libexec/java_home)
+JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
 
 # because the npm plugin doesn't work properly...
 eval "$(npm completion 2>/dev/null)"
 
-eval "$(jenv init -)"
+# eval "$(jenv init -)"
 
 eval "$(boot2docker shellinit 2>/dev/null)"
 
 #THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
 [[ -s "/Users/bryanbanz/.gvm/bin/gvm-init.sh" ]] && source "/Users/bryanbanz/.gvm/bin/gvm-init.sh"
 
-fortune -s | cowsay | lolcat
+chuck | cowsay | lolcat
