@@ -88,13 +88,14 @@
 	br = branch
 	ci = commit
 	st = status
-	
+
 	lsd = log --graph --decorate --pretty=oneline --abbrev-commit --all
 
 	# Make "git grep" look a bit like "ack"/"ag". Note that you need to
 	# specify --no-index to search all files, and that submodules are not
 	# searched.
 	ack = grep --extended-regexp --break --heading --line-number
-
+[commit]
+  template = ~/.gitmessage
 [include]
   path = .gitconfig.local
