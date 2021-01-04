@@ -1,109 +1,132 @@
-# Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+# Uncomment to profile shell startup
+# taken from https://esham.io/2018/02/zsh-profiling
+#
+# zmodload zsh/datetime
+# setopt PROMPT_SUBST
+# PS4='+$EPOCHREALTIME %N:%i> '
 
-ZSH_THEME="jnrowe"
+# logfile=$(mktemp zsh_profile.XXXXXXXX)
+# echo "Logging to $logfile"
+# exec 3>&2 2>$logfile
 
-DISABLE_CORRECTION="true"
-DISABLE_AUTO_UPDATE="true"
+# setopt XTRACE
+# ------------------------------------
+zmodload zsh/zprof
 
-# Uncomment following line if you want to  shown in the command execution time stamp
-# in the history command output. The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|
-# yyyy-mm-dd
-HIST_STAMPS="mm/dd/yyyy"
+export ZPLUG_HOME=/usr/local/opt/zplug
+source $ZPLUG_HOME/init.zsh
 
-plugins=(
-   adb
-   battery
-   bower
-   brew
-   brew-cask
-   chucknorris
-   cp
-   django
-   docker
-   emoji-clock
-   extract
-   fasd
-   git
-   git-delete-history
-   git-extras
-   github
-   gitignore
-   gitlab
-   gradle
-   grails
-   heroku
-   better-history-search
-   jsontools
-   mvn
-   nyan
-   pip
-   pj
-   postgres
-   python
-   osx
-   rsync
-   ruby
-   rvm
-   scd
-   sprunge
-   sublime
-   svn
-   themes
-   t
-   vagrant
-   virtualenv
-   web-search
-   z
-)
+HIST_STAMPS="yyyy-mm-dd"
 
-PROJECT_PATHS=(
-    ~/Development/
-    ~/Development/firemon/core/
-    ~/Development/firemon/proserv/
-    ~/Development/firemon/proserv/clients/
-    ~/Development/firemon/proserv/kit/
-    ~/Development/3rd_party/
-    ~/Development/labs/
-)
+# ZSH_TMUX_AUTOSTART=true
+# ZSH_TMUX_ITERM2=tue
 
-source $ZSH/oh-my-zsh.sh
+# zplug "plugins/better-history-search", from:oh-my-zsh
+# zplug "plugins/git-delete-history",    from:oh-my-zsh
+# zplug "zsh-users/zsh-completions"
+zplug "joshuarubin/zsh-homebrew"
 
-# User configuration
+zplug "Tarrasch/zsh-autoenv"
 
-for P in \
-  /usr/bin \
-  /bin \
-  /usr/sbin \
-  /sbin \
-  /usr/local/bin \
-  ~/.pythonbrew/bin \
-  ~/bin \
-  ~/runtimes/gosu/bin \
-  /usr/local/heroku/bin \
-  ~/.rvm/bin \
-  /usr/texbin \
-  ~/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/ \
-; do
-  if [[ -d $P ]]; then PATH=$PATH:$P ; fi
-done
+zplug "robbyrussell/oh-my-zsh",        use:"lib/*.zsh"
 
-export PATH
+zplug "mafredri/zsh-async",            from:github
+# zplug "denysdovhan/spaceship-prompt",  from:github, use:spaceship.zsh, as:theme
+# zplug "sindresorhus/pure",             from:github, use:pure.zsh, as:theme
+# zplug "~/.tilde/zsh", from:local, as:theme
 
-export EDITOR="subl --wait"
+zplug "plugins/aws",                   from:oh-my-zsh
+zplug "plugins/bundler",               from:oh-my-zsh
+zplug "plugins/common-aliases",        from:oh-my-zsh
+zplug "plugins/chucknorris",           from:oh-my-zsh
+# zplug "plugins/cp",                    from:oh-my-zsh
+zplug "plugins/docker",                from:oh-my-zsh
+zplug "plugins/docker-compose",        from:oh-my-zsh
+# zplug "plugins/extract",               from:oh-my-zsh
+# zplug "plugins/fasd",                  from:oh-my-zsh
+zplug "plugins/fzf",                   from:oh-my-zsh
+# zplug "plugins/gem",                   from:oh-my-zsh
+zplug "plugins/git",                   from:oh-my-zsh
+zplug "plugins/git-extras",            from:oh-my-zsh
+zplug "plugins/git-flow-avh",          from:oh-my-zsh
+zplug "plugins/github",                from:oh-my-zsh
+zplug "plugins/gitignore",             from:oh-my-zsh
+zplug "plugins/heroku",                from:oh-my-zsh
+# zplug "plugins/mix",                   from:oh-my-zsh
+# zplug "plugins/mix-fast",              from:oh-my-zsh
+# zplug "plugins/perms",                 from:oh-my-zsh
+zplug "plugins/pj",                    from:oh-my-zsh
+zplug "plugins/postgres",              from:oh-my-zsh
+# # zplug "plugins/osx",                   from:oh-my-zsh
+# zplug "plugins/rsync",                 from:oh-my-zsh
+zplug "plugins/rails",                 from:oh-my-zsh
+# zplug "plugins/rake-fast",             from:oh-my-zsh
+# zplug "plugins/ruby",                  from:oh-my-zsh
+zplug "plugins/rvm",                   from:oh-my-zsh
+zplug "plugins/sublime",               from:oh-my-zsh
+# zplug "plugins/themes",                from:oh-my-zsh
+# zplug "plugins/tmux",                  from:oh-my-zsh
+# zplug "plugins/tmuxinator",            from:oh-my-zsh
+# zplug "plugins/vagrant",               from:oh-my-zsh
+# zplug "plugins/web-search",            from:oh-my-zsh
+# zplug "plugins/yarn",                  from:oh-my-zsh
+
+zplug "DhavalKapil/luaver"
+zplug "lukechilds/zsh-nvm"
+zplug 'wfxr/forgit'
+
+zplug "~/.tilde/zsh", from:local
+
+PROJECT_PATH_BASE=~/Projects/
+PROJECT_PATHS=($PROJECT_PATH_BASE `ls -1d $PROJECT_PATH_BASE*/`)
+
+zplug check --verbose || zplug install
+zplug load
+
+unalias rm
+
+export EDITOR="/usr/local/bin/subl --wait"
 export VISUAL=$EDITOR
 
-export JAVA_HOME
-JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+export JRUBY_OPTS="--debug"
+export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig
 
-# because the npm plugin doesn't work properly...
-eval "$(npm completion 2>/dev/null)"
+export DISABLE_SPRING=1
 
-# eval "$(jenv init -)"
+[ -f ~/.iterm2_shell_integration.zsh ] && . ~/.iterm2_shell_integration.zsh
 
-eval "$(boot2docker shellinit 2>/dev/null)"
+export FZF_DEFAULT_COMMAND='
+  (git ls-tree -r --name-only HEAD ||
+   find . -path "*/\.*" -prune -o -type f -print -o -type l -print |
+      sed s/^..//) 2> /dev/null'
 
-#THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
-[[ -s "/Users/bryanbanz/.gvm/bin/gvm-init.sh" ]] && source "/Users/bryanbanz/.gvm/bin/gvm-init.sh"
+export FZF_DEFAULT_COMMAND='fd --type f'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_COMPLETION_OPTS
+export FZF_DEFAULT_OPTS="--height 40% --reverse --preview 'bat --style=numbers --color=always {}'"
 
-chuck | cowsay | lolcat
+export HOMEBREW_GITHUB_API_TOKEN_=539ebfe1f10a686d45c3fcd381287321326411cf
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+export PATH="/usr/local/opt/python@3.8/bin:$PATH"
+export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+
+timezsh() {
+  shell=${1-$SHELL}
+  for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
+}
+
+export STARSHIP_CONFIG=~/.starship
+eval "$(starship init zsh)"
+
+# Uncomment to profile shell startup
+#
+# unsetopt XTRACE
+# exec 2>&3 3>&-
+#
+
+# zprof
