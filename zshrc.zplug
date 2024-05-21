@@ -1,0 +1,137 @@
+# Uncomment to profile shell startup
+# taken from https://esham.io/2018/02/zsh-profiling
+#
+# zmodload zsh/datetime
+# setopt PROMPT_SUBST
+# PS4='+$EPOCHREALTIME %N:%i> '
+
+#logfile=$(mktemp zsh_profile.XXXXXXXX)
+#echo "Logging to $logfile"
+#exec 3>&2 2>$logfile
+
+#setopt XTRACE
+# ------------------------------------
+
+# or use zsh's builtin zprof module
+# zmodload zsh/zprof
+
+HIST_STAMPS="yyyy-mm-dd"
+
+PROJECT_PATH_BASE=~/Projects/
+PROJECT_PATHS=($PROJECT_PATH_BASE `ls -1d $PROJECT_PATH_BASE*/`)
+
+export EDITOR="/usr/local/bin/subl --wait"
+export VISUAL="$EDITOR"
+
+export ZPLUG_HOME=/usr/local/opt/zplug
+source $ZPLUG_HOME/init.zsh
+
+# ZSH_TMUX_AUTOSTART=true
+# ZSH_TMUX_ITERM2=true
+
+# zplug "mafredri/zsh-async",           from:github
+
+# zplug "zsh-users/zsh-completions"
+zplug "robbyrussell/oh-my-zsh",        use:"lib/completion.zsh"
+zplug "robbyrussell/oh-my-zsh",        use:"lib/directories.zsh"
+zplug "robbyrussell/oh-my-zsh",        use:"lib/functions.zsh"
+zplug "robbyrussell/oh-my-zsh",        use:"lib/grep.zsh"
+zplug "robbyrussell/oh-my-zsh",        use:"lib/history.zsh"
+zplug "robbyrussell/oh-my-zsh",        use:"lib/key-bindings.zsh"
+zplug "robbyrussell/oh-my-zsh",        use:"lib/misc.zsh"
+zplug "robbyrussell/oh-my-zsh",        use:"lib/nvm.zsh"
+zplug "robbyrussell/oh-my-zsh",        use:"lib/prompt_info_functions.zsh"
+zplug "robbyrussell/oh-my-zsh",        use:"lib/spectrum.zsh"
+# zplug "robbyrussell/oh-my-zsh",        use:"lib/termsupport.zsh"
+zplug "robbyrussell/oh-my-zsh",        use:"lib/theme-and-appearance.zsh"
+
+zplug "plugins/aws",                   from:oh-my-zsh
+zplug "plugins/bundler",               from:oh-my-zsh
+zplug "plugins/common-aliases",        from:oh-my-zsh
+zplug "plugins/chucknorris",           from:oh-my-zsh
+zplug "plugins/cp",                    from:oh-my-zsh
+zplug "plugins/docker",                from:oh-my-zsh
+zplug "plugins/docker-compose",        from:oh-my-zsh
+zplug "plugins/extract",               from:oh-my-zsh
+zplug "plugins/fzf",                   from:oh-my-zsh
+zplug "plugins/git",                   from:oh-my-zsh
+zplug "plugins/git-extras",            from:oh-my-zsh
+zplug "plugins/git-flow-avh",          from:oh-my-zsh
+zplug "plugins/github",                from:oh-my-zsh
+zplug "plugins/gitignore",             from:oh-my-zsh
+zplug "plugins/heroku",                from:oh-my-zsh
+zplug "plugins/perms",                 from:oh-my-zsh
+zplug "plugins/pj",                    from:oh-my-zsh
+zplug "plugins/postgres",              from:oh-my-zsh
+zplug "plugins/rails",                 from:oh-my-zsh
+zplug "plugins/rvm",                   from:oh-my-zsh
+zplug "plugins/sublime",               from:oh-my-zsh
+# zplug "plugins/themes",                from:oh-my-zsh
+# zplug "plugins/tmux",                  from:oh-my-zsh
+# zplug "plugins/tmuxinator",            from:oh-my-zsh
+zplug "plugins/web-search",            from:oh-my-zsh
+zplug "plugins/yarn",                  from:oh-my-zsh
+
+zplug "ziglang/shell-completions"
+
+zplug "joshuarubin/zsh-homebrew"
+zplug 'wfxr/forgit'
+# zplug "DhavalKapil/luaver"
+zplug "lukechilds/zsh-nvm"
+zplug "Tarrasch/zsh-autoenv"
+
+zplug "~/.tilde/zsh", from:local, defer:1
+
+zplug check --verbose || zplug install
+zplug load
+
+[ -f ~/.iterm2_shell_integration.zsh ] && . ~/.iterm2_shell_integration.zsh
+
+# export DISABLE_SPRING=1
+export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
+export HOMEBREW_GITHUB_API_TOKEN_=539ebfe1f10a686d45c3fcd381287321326411cf
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig
+
+export PATH="/usr/local/bin:$PATH"
+export PATH="/usr/local/opt/python@3.8/bin:$PATH"
+export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+. ~/.rvm/scripts/rvm
+
+timezsh() {
+  shell=${1-$SHELL}
+  for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
+}
+
+export STARSHIP_CONFIG=~/.starship
+eval "$(starship init zsh)"
+
+# Uncomment to profile shell startup
+#
+#unsetopt XTRACE
+#exec 2>&3 3>&-
+#./sort_timings.zsh $logfile > $logfile.sorted
+
+# opam configuration
+[[ ! -r /Users/bbanz/.opam/opam-init/init.zsh ]] || source /Users/bbanz/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+# __conda_setup="$('/Users/bbanz/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#     eval "$__conda_setup"
+# else
+#     if [ -f "/Users/bbanz/miniconda3/etc/profile.d/conda.sh" ]; then
+#         . "/Users/bbanz/miniconda3/etc/profile.d/conda.sh"
+#     else
+#         export PATH="/Users/bbanz/miniconda3/bin:$PATH"
+#     fi
+# fi
+# unset __conda_setup
+# <<< conda initialize <<<
+

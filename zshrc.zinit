@@ -1,0 +1,121 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
+
+if [[ -f "/usr/local/Homebrew/bin/brew" ]] then
+  eval "$(/usr/local/Homebrew/bin/brew shellenv)"
+fi
+
+# Set the directory we want to store zinit and plugins
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+
+# Download Zinit, if it's not there yet
+if [ ! -d "$ZINIT_HOME" ]; then
+   mkdir -p "$(dirname $ZINIT_HOME)"
+   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
+
+# Source/Load zinit
+source "${ZINIT_HOME}/zinit.zsh"
+
+# must be set before loading OMZ::history.zsh
+HIST_STAMPS="yyyy-mm-dd"
+
+
+# Add in Powerlevel10k
+zi ice depth=1;
+zi light romkatv/powerlevel10k
+
+# Add in zsh plugins
+zi light zsh-users/zsh-syntax-highlighting
+zi light zsh-users/zsh-completions
+zi light zsh-users/zsh-autosuggestions
+zi light Aloxaf/fzf-tab
+
+#### From original
+#
+zi snippet OMZL::completion.zsh
+zi snippet OMZL::directories.zsh
+zi snippet OMZL::functions.zsh
+zi snippet OMZL::grep.zsh
+zi snippet OMZL::history.zsh
+zi snippet OMZL::key-bindings.zsh
+zi snippet OMZL::misc.zsh
+zi snippet OMZL::nvm.zsh
+zi snippet OMZL::prompt_info_functions.zsh
+zi snippet OMZL::spectrum.zsh
+# zi snippet OMZL::termsupport.zsh
+zi snippet OMZL::theme-and-appearance.zsh
+
+zi snippet OMZP::aws
+zi snippet OMZP::bundler
+zi snippet OMZP::command-not-found
+zi snippet OMZP::common-aliases
+zi snippet OMZP::chucknorris
+zi snippet OMZP::cp
+zi snippet OMZP::docker
+zi snippet OMZP::docker-compose
+zi snippet OMZP::extract
+zi snippet OMZP::fzf
+zi snippet OMZP::git
+zi snippet OMZP::git-extras
+zi snippet OMZP::git-flow-avh
+zi snippet OMZP::github
+zi snippet OMZP::gitignore
+zi snippet OMZP::heroku
+zi snippet OMZP::perms
+zi snippet OMZP::pj
+zi snippet OMZP::postgres
+zi snippet OMZP::rails
+zi snippet OMZP::rvm
+zi snippet OMZP::sublime
+# zi snippet OMZP::themes
+# zi snippet OMZP::tmux
+# zi snippet OMZP::tmuxinator
+zi snippet OMZP::web-search
+zi snippet OMZP::yarn
+
+zi load ziglang/shell-completions
+zi load joshuarubin/zsh-homebrew
+zi load wfxr/forgit
+# zi load DhavalKapil/luaver
+zi load lukechilds/zsh-nvm
+zi load Tarrasch/zsh-autoenv
+
+zi ice svn
+zi snippet "${HOME}/.tilde/zsh/"
+
+########
+
+# Load completions
+autoload -Uz compinit && compinit
+
+zi cdreplay -q
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Keybindings
+# bindkey -e
+# bindkey '^p' history-search-backward
+# bindkey '^n' history-search-forward
+# bindkey '^[w' kill-region
+
+# Completion styling
+# zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+# zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+# zstyle ':completion:*' menu no
+# zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+# zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
+
+# Aliases
+# alias ls='ls --color'
+# alias vim='nvim'
+# alias c='clear'
+
+# Shell integrations
+eval "$(fzf --zsh)"
+# eval "$(zoxide init --cmd cd zsh)"
